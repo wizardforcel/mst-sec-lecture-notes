@@ -159,7 +159,7 @@ insert into sqlinj values (1, "item: 1");
 之后我们将以下内容保存为`sql.php`：
 
 ```php
-<form method="POST" target="./sql.php">
+<form method="POST" action="./sql.php">
     ID：
     <input type="text" name="id" />
     <input type="submit" value="查询" />
