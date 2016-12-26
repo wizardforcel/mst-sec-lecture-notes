@@ -110,13 +110,50 @@ while($row=mysql_fetch_array($result)){
 
 ## 利用
 
-米斯特安全团队为大家准备了一个 XSS 利用平台，位于`xss.hi-ourlife.com`。我们可能需要通过 XSS 来获得用户 Cookie 或其他有用信息，利用平台负责接收并保存这些信息。另外，利用平台能够托管利用脚本，于是我们可以向页面只注入一个脚本链接，使长度极大缩短。
+我们可能需要通过 XSS 来获得用户 Cookie 或其他有用信息，利用平台负责接收并保存这些信息。另外，利用平台能够托管利用脚本，于是我们可以向页面只注入一个脚本链接，使长度极大缩短。
 
-我们登录进去之后，查看一下利用说明：
+米斯特安全团队为大家准备了一个 XSS 利用平台，位于`xss.hi-ourlife.com`。这个平台用的是 xsser.me，我们也能够自己下载和搭建。
+
++   下载：http://download.csdn.net/detail/gzliu_hit/5606811
++   搭建：http://blog.csdn.net/god_7z1/article/details/47234989
+
+首先访问主页，你会看到一个登录页面，输入用户名和密码之后点击“登录”：
+
+![](http://ww1.sinaimg.cn/large/841aea59jw1fb3yxb3dnnj20s30b0weo.jpg)
+
+成功之后会显示主界面，左边是模块列表，右边是项目列表：
+
+![](http://ww2.sinaimg.cn/large/841aea59jw1fb3yxe64umj20rh0bbmxp.jpg)
+
+我们点击左边“我的项目”旁边的“创建”按钮：
+
+![](http://ww1.sinaimg.cn/large/841aea59jw1fb3yxn90ygj20nf0f3dfx.jpg)
+
+名称和描述可以随便取，不影响使用。输入时候点击“下一步”按钮。之后会出现“配置代码”界面：
+
+![](http://ww4.sinaimg.cn/large/841aea59jw1fb3yxpzws8j20l30htaac.jpg)
+
+我们只选择默认模块，把它展开之后，我们可以看到它的作用是向平台发送一个请求，来收集用户的各种信息。之后点击“下一步”。
+
+![](http://ww4.sinaimg.cn/large/841aea59jw1fb3yxv7av7j20jj06u3z7.jpg)
+
+然后我们会在首页看到我们的新项目，点击这个项目：
+
+![](http://ww1.sinaimg.cn/large/841aea59jw1fb3yy1gjxej20rd04pdg3.jpg)
+
+之后点击右上方的查看代码，就可以看到使用方法：
+
+![](http://ww3.sinaimg.cn/large/841aea59jw1fb3yy4ue4gj20lq0e3405.jpg)
+
+![](http://ww2.sinaimg.cn/large/841aea59jw1fb3yy7ox5hj20le07xdg6.jpg)
+
+简单来说，`MyzcXv?1467719328`就是平台所生成的脚本地址，你可以把它放在`script`或者`img`标签的`src`属性中，在把标签插入存在 XSS 漏洞的地方，然后浏览器就会执行。
+
+下面我们点击之前创建的`aaa`项目。
 
 ![](http://ww1.sinaimg.cn/large/841aea59jw1faximf8m9uj213m0o0q6c.jpg)
 
-基本意思就是把一段远程`script`标签插入到存在 XSS 漏洞的地方。比如，我们把其中的`<script src="..."></script>`注入到反射型 XSS 的演示页面中。
+我们把`<script src="..."></script>`注入到反射型 XSS 的演示页面中。
 
 ![](http://ww3.sinaimg.cn/large/841aea59jw1faximjwhluj20m807ht95.jpg)
 
