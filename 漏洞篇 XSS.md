@@ -166,3 +166,7 @@ while($row=mysql_fetch_array($result)){
 + [XSS 过滤绕过备忘单](http://cheatsheets.hackdig.com/?4.htm)
 
 + [HTML5 安全备忘单](https://html5sec.org/)
+
++ [新手指南：DVWA-1.9全级别教程之XSS](http://www.freebuf.com/articles/web/123779.html)
+
++ [那些年我们一起学XSS](https://www.gitbook.com/book/wizardforcel/xss-naxienian/details)

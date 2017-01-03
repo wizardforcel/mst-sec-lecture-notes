@@ -51,3 +51,7 @@ CSRF 攻击的原理就是攻击者创建一个链接，受害者点击它之后
 我们可以把这个文件发给受害者，让他打开。也可以放到网上把链接发给受害者。我们试着打开它，当我们打开之后，我们可以看到，成功添加了我们所需的管理员。
 
 ![](http://ww4.sinaimg.cn/large/841aea59jw1fb40mbjgt9j213s0mogn7.jpg)
+
+## 附录
+
++   [新手指南：DVWA-1.9全级别教程之CSRF](http://www.freebuf.com/articles/web/118352.html)
