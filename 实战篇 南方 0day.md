@@ -75,3 +75,7 @@ do while not rs.eof
 ![](http://ww2.sinaimg.cn/large/841aea59jw1fb46k8imfgj20hc08mq3b.jpg)
 
 我们看到源代码中出现了这个东西。
+
+## 附录
+
++   [黑帽百科：2.2 常见 0day](http://www.xiaoshuwu.net/black-hat-seo/)
