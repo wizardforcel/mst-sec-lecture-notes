@@ -6,22 +6,44 @@
 
 > 协议：[CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
+跨站脚本攻击（Cross Site Scripting），为不和层叠样式表（Cascading Style Sheets，CSS）的缩写混淆，故将跨站脚本攻击缩写为 XSS 。恶意攻击者往 Web 页面里插入恶意 JavaScript 代码，当用户浏览器该页之时，嵌入 Web 页面里的代码会被执行，从而达到恶意攻击用户的目的。
+
+![](http://upload-images.jianshu.io/upload_images/118142-d91de274c3a530ee.jpg)
+
+## Payload
+
+Payload 的中文含义是有效载荷，在 XSS 中指代攻击代码或攻击语句。
+
+常见的 Payload 有：
+
++   正常弹窗
+    +   `<script>alert(1)</script>`
+    +   `<img src=0 onerror=alert(1)>`
++   弹出网站 Cookie
+    +   `<script>alert(document.cookie)</script>`
+    +   `<img src=0 onerror=alert(document.cookie)>`
+
 ## 分类
 
 总共有三种
 
-+   反射型：经过后端，不经过数据库
++   反射型：Payload 经过后端，不经过数据库
 
-+   存储型：经过后端，经过数据库
++   存储型：Payload 经过后端，经过数据库
 
-+   DOM：不经过后端
++   DOM：Payload 不经过后端
 
 ## 原理：反射型
+
+非持久化，需要欺骗用户点击链接才能触发 XSS 代码（数据库中没有这样的页面和内容）。Payload 一般存在于 URL 或者 HTTP 正文中，需要构造页面，或者构造 URL。
 
 将这段代码保存为`xss.php`。
 
 ```php
-\\XSS反射演示
+<?php
+header('X-XSS-Protection: 0');
+?>
+<p>反射型 XSS 演示</p>
 <form action="" method="get">
     <input type="text" name="xss"/>
     <input type="submit" value="test"/>
@@ -29,7 +51,7 @@
 <?php
 $xss = @$_GET['xss'];
 if($xss!==null){
-	echo $xss;
+    echo $xss;
 }
 ```
 
@@ -51,14 +73,21 @@ if($xss!==null){
 
 我们可以自定义弹窗中的内容来利用 XSS，比如改成`alert(document.cookie)`。
 
+这个例子中 URL 为`http://localhost/xss.php?xss=%3Cscript%3Ealert%281%29%3C%2Fscript%3E`，这个 URL 容易引起怀疑，可以使用短网址工具缩短后发送给受害者。
+
 从上面的例子中，我们可以看出，反射型 XSS 的数据流向是：浏览器 -> 后端 -> 浏览器。
 
 ## 原理：存储型
 
+持久化，代码储存在数据库中。如在个人信息或发表文章等地方，假如代码，如果没有过滤或过滤不严，那么这些代码将储存到数据库中，用户访问该页面的时候出发代码执行。这种 XSS 比较危险，容易造成蠕虫，盗窃 Cookie 等。
+
 这里我们把`xss.php`内容改为（同时数据库中需要配置相应的表）：
 
 ```php
-\\存储XSS演示
+<?php
+header('X-XSS-Protection: 0');
+?>
+<p>存储型 XSS 演示</p>
 <form action="" method="post">
     <input type="text" name="xss"/>
     <input type="submit" value="test"/>
@@ -84,7 +113,7 @@ mysql_select_db("xss");
 $sql="select payload from test where id=1";
 $result=mysql_query($sql);
 while($row=mysql_fetch_array($result)){
-   echo $row['payload'];
+    echo $row['payload'];
 }
 ```
 
@@ -112,7 +141,7 @@ while($row=mysql_fetch_array($result)){
 
 我们可能需要通过 XSS 来获得用户 Cookie 或其他有用信息，利用平台负责接收并保存这些信息。另外，利用平台能够托管利用脚本，于是我们可以向页面只注入一个脚本链接，使长度极大缩短。
 
-米斯特安全团队为大家准备了一个 XSS 利用平台，位于`xss.hi-ourlife.com`。这个平台用的是 xsser.me，我们也能够自己下载和搭建。
+这里的 XSS 利用平台使用 xsser.me，大家可以自行下载和搭建。
 
 +   下载：http://download.csdn.net/detail/gzliu_hit/5606811
 +   搭建：http://blog.csdn.net/god_7z1/article/details/47234989
