@@ -317,3 +317,9 @@ Nmap done: 1 IP address (1 host up) scanned in 13.48 seconds
 +   [Nmap 脚本使用总结](http://www.2cto.com/article/201406/307959.html)
 
 +   [Nmap 参考指南](https://www.gitbook.com/book/wizardforcel/nmap-man-page/details)
+
++   [Kali Linux 网络扫描秘籍 第三章 端口扫描（一）](http://www.jianshu.com/p/093b7386e1e8)
+
++   [Kali Linux 网络扫描秘籍 第三章 端口扫描（二）](http://www.jianshu.com/p/c484258dbc34)
+
++   [Kali Linux 网络扫描秘籍 第三章 端口扫描（三）](http://www.jianshu.com/p/29d97054217c)
