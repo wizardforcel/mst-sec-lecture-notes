@@ -185,7 +185,7 @@ MySQL 中有一个数据库叫做`information_schema`，储存数据库和表的
 
 我们需要把问号处换成 0 ~ 6，一个一个尝试，七个表名称就出来了。比如，我们获取第一个表的名称。
 
-!()[http://upload-images.jianshu.io/upload_images/118142-a2baf5dcdbb4c43a.jpg]
+![](http://upload-images.jianshu.io/upload_images/118142-a2baf5dcdbb4c43a.jpg)
 
 它叫`email`，在真实场景下，这里面一般就是一部分用户信息了。如果第一个表示无关紧要的信息，可以继续寻找。
 
@@ -211,7 +211,7 @@ MySQL 中有一个数据库叫做`information_schema`，储存数据库和表的
 
 同样，我们需要把问号替换为 0 和 1；
 
-!()[http://upload-images.jianshu.io/upload_images/118142-fc29392755f102e5.jpg]
+![](http://upload-images.jianshu.io/upload_images/118142-fc29392755f102e5.jpg)
 
 我们这里查询结果为，第一列叫做`userid`，第二列叫做`email`。
 
@@ -221,7 +221,7 @@ MySQL 中有一个数据库叫做`information_schema`，储存数据库和表的
 1 and 1=2 union select 1, count(1) from email
 ```
 
-!()[http://upload-images.jianshu.io/upload_images/118142-ad87dad537ba05d2.jpg]
+![](http://upload-images.jianshu.io/upload_images/118142-ad87dad537ba05d2.jpg)
 
 ### 查询记录
 
@@ -231,7 +231,7 @@ MySQL 中有一个数据库叫做`information_schema`，储存数据库和表的
 
 我们把问号替换为 0 和 1，就得到了所有的数据。
 
-!()[http://upload-images.jianshu.io/upload_images/118142-af910d42d4e22a9d.jpg]
+![](http://upload-images.jianshu.io/upload_images/118142-af910d42d4e22a9d.jpg)
 
 ## 手工注入：基于布尔值
 
