@@ -11,3 +11,11 @@
 + [EPUB格式](https://www.gitbook.com/download/epub/book/wizardforcel/mst-sec-lecture-notes)
 + [MOBI格式](https://www.gitbook.com/download/mobi/book/wizardforcel/mst-sec-lecture-notes)
 + [代码仓库](https://github.com/wizardforcel/mst-sec-lecture-notes)
+
+## 更新历史
+
+| 版本 | 日期 | 内容 |
+| --- | --- | --- |
+| v1.5 | 2017.3.9 | 米斯特第二期视频基础篇内容 |
+| v1.1 | 2016.1.3 | 增加参考链接 |
+| v1.0 | 2016.12.27 | 米斯特第一期视频全部内容 |
