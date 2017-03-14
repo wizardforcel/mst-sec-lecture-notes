@@ -19,3 +19,4 @@
 + [实战篇 WordPress](实战篇 WordPress.md)
 + [实战篇 南方 0day](实战篇 南方 0day.md)
 + [实战篇 余闻同学录](实战篇 余闻同学录.md)
++ [实战篇 迅雷 CMS](实战篇 迅雷 CMS.md)
